@@ -1,12 +1,8 @@
-$ ISSO AQUI É UM COMENTÁRIO
-INTEGER variavel <- 42
-STRING teste <- "Hello World"
-IF teste = "Hello World":
-	WRITE("oi")
+TESTING THIS CODE
+TOKENIZE TOKEN = 0
 
-IF teste = "olá":
-	WRITE("oi")
-ELIF teste = "oie":
-	WRITE("oi")
-ELSE:
-	WRITE("Funcionou")	
+    HELLO WORLD
+        HELLO DATA
+
+        
+TESTING CHAT

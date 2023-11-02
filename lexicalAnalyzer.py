@@ -15,12 +15,12 @@ class scanner():
     def __isCharUpper(self, char: chr):
         return char.isupper()
 
-    def _isCharLower(self, char: chr):
+    def __isCharLower(self, char: chr):
         return char >= 'a' and char <= 'z'
 
-    def _isSymbol(self, char: chr):
-        return char == '(' or char == ')' or char == '#' or char == "[" or char == "]"
+    def __isSymbol(self, char: chr):
+        return char == '(' or char == ')' or char == "[" or char == "]"
 
-    def _isOperator(self, char: chr):
+    def __isOperator(self, char: chr):
         return char == '+' or char == '-' or char == '*'
                 
