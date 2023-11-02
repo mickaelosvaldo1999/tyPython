@@ -41,9 +41,6 @@ class scanner():
 
     def __isCharLower(self, char: chr):
         return char >= 'a' and char <= 'z'
-
-    def __isOperator(self, char: chr):
-        return char == '+' or char == '-' or char == '*'
     
     def __isKeyword(self, word):
         if word == "INTEGER":
@@ -108,18 +105,6 @@ class scanner():
             return Token("*")
         elif word == "/":
             return Token("/")
-        elif word == "<":
-            return Token("<")
-        elif word == ">":
-            return Token(">")
-        elif word == "<=":
-            return Token("<=")
-        elif word == ">=":
-            return Token(">=")
-        elif word == "=":
-            return Token("=")
-        elif word == "!=":
-            return Token("!=")
         else:
             return False
     
