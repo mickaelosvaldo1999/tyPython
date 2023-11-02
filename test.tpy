@@ -1,0 +1,12 @@
+$ ISSO AQUI É UM COMENTÁRIO
+INTEGER variavel <- 42
+STRING teste <- "Hello World"
+IF teste = "Hello World":
+	WRITE("oi")
+
+IF teste = "olá":
+	WRITE("oi")
+ELIF teste = "oie":
+	WRITE("oi")
+ELSE:
+	WRITE("Funcionou")	

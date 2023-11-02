@@ -1,0 +1,22 @@
+{
+    "TK_NUM": "0",
+    "TK_CHAR": "1",
+    "TK_ID": "2",
+    "TK_TYPE": "3",
+    "TK_IF": "4",
+    "TK_ELSE": "5",
+    "TK_ELIF": "6",
+    "TK_WHILE": "7",
+    "TK_RETURN": "8",
+    "TK_READ": "9",
+    "TK_WRITE": "10",
+    "TK_PARENTOPEN": "11",
+    "TK_PARENTCLOSE": "12",
+    "TK_AND": "13",
+    "TK_OR": "14",
+    "TK_NOT": "15",
+    "TK_BOOL": "16",
+    "TK_LESSPLUS": "17",
+    "TK_TIMESDIV": "18"
+
+}
