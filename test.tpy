@@ -1,8 +1,7 @@
-TESTING THIS CODE
-TOKENIZE TOKEN = 0
+$ Typython example
+INTEGER teste <- 78
 
-    HELLO WORLD
-        HELLO DATA
-
-        
-TESTING CHAT
+    $Comment with spaces
+    IF ( teste = 78 ) :
+        teste <- 49
+    :
