@@ -1,7 +1,0 @@
-$ Typython example
-INTEGER teste <- 78
-
-    $Comment with spaces
-    IF ( teste = 78 ) :
-        teste <- 49
-    :

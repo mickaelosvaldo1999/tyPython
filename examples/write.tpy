@@ -1,0 +1,8 @@
+$ TyPython example of WRITE $
+$ WRITE '(' any data ')' ';'$
+$ any data is string value, int value, bool value, real value or identifier $
+:
+STRING x;
+WRITE("Write example");
+WRITE(x);
+:

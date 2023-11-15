@@ -1,0 +1,9 @@
+$ TyPython example of loop with while $
+:
+BOOLEAN x;
+x <- 1;
+WHILE (x = 1):
+    WRITE("LOOP");
+    READ(x);
+:
+:
