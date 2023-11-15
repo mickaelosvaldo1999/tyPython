@@ -1,0 +1,6 @@
+$ TyPython example of READ $
+$ READ '(' "identifier" ')' ';'$
+:
+STRING x;
+READ(x);
+:

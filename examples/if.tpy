@@ -1,0 +1,14 @@
+$ TyPython example of if/elif/else $
+:
+INTEGER a;
+INTEGER b;
+READ(a);
+READ(b);
+IF (a>b):
+    WRITE(a);
+:ELIF(b>a):
+    WRITE(b);
+:ELSE:
+    WRITE("a equals b");
+:
+:
