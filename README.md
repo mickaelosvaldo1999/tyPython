@@ -5,4 +5,4 @@
 
 - In the examples folder you will find examples of the basic structures of this language and how to use them.
 
-- Comments in this language must be enclosed in `$`, as follows: `$ comment $`
+- Comments in this language must be enclosed in `$`, as follows: `$ comment $`.
