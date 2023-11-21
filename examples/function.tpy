@@ -1,0 +1,15 @@
+$ TyPython example of functions $
+:
+FUNCTION soma(INTEGER a, INTEGER b):
+    INTEGER c;
+    c <- a + b;
+    RETURN c
+:
+INTEGER a;
+INTEGER b;
+READ(a);
+READ(b);
+INTEGER c;
+c <- soma(a,b);
+WRITE(c);
+:

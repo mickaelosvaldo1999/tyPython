@@ -2,7 +2,7 @@ from lexical_analyzer import split_text, remove_coments, tokens
 from syntax_analyzer import syntax_analyzer
 from semantic_analyzer import semantic_analyzer
 #Reading the file name
-file_name = 'examples/write.tpy'
+file_name = input("Enter the tpy file name: ")
 
 #Opening the file
 file = open(file_name,'r')

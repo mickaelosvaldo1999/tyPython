@@ -27,7 +27,7 @@
 # S -> A | I | L | W | R | F | V | ε
 # V -> T "id"; S
 # T -> INTEGER | STRING | BOOLEAN | REAL
-# A -> "id" <- D; S | "id" <- EXP; S
+# A -> "id" <- D; S | "id" <- EXP; S | "id" <- "FUNCTION" "(" PARAMETERS_ ")"; S
 # D -> int | str | bool | real | "id"
 # EXP -> D OPA D | "id" OPA "id" | D OPA "id" | "id" OPA D
 # I -> "IF" "(" CONDITION ")" ":" S ":" S | "IF" "(" CONDITION ")" ":" S ":" E
@@ -42,7 +42,7 @@
 # R -> "READ" "(" "id" ")" ";"
 # F -> "FUNCTION" "id" "(" PARAMETERS ")" ":" S "RETURN" D ":" S
 # PARAMETERS -> T "id" | T "id" "," PARAMETERS
-
+# PARAMETERS_ -> "id" |"id" "," PARAMETERS_
 class Node:
     def __init__(self, type, value = None):
         self.type = type
@@ -75,9 +75,9 @@ def P(tokens):
             return node
         else:
             print(tokens[0][0], tokens[0][1])
-            raise Exception("Syntax Error: Missing ':'")
+            raise Exception("Syntax Error: Missing ':' in the end")
     else:
-        raise Exception("Syntax Error: Missing ':'")
+        raise Exception("Syntax Error: Missing ':' in the beginning")
 
 def S(tokens):
     node = Node("S")
@@ -147,7 +147,30 @@ def A(tokens):
     if tokens[0][0]== 21:
         node.add_sons(Node(21, tokens[0][1]))
         tokens.pop(0)
-        if tokens[0][0] == 14 and tokens[2][0] != 12:
+        if tokens[0][0] == 14 and tokens[1][0] == 21 and (tokens[2][0] == 15 and tokens[2][1] =="("):
+            node.add_sons(Node(14, None))
+            tokens.pop(0)
+            node.add_sons(Node(21, tokens[0][1]))
+            tokens.pop(0)
+            if tokens[0][0] == 15 and tokens[0][1] == "(":
+                node.add_sons(Node(15, "("))
+                tokens.pop(0)
+                node.add_sons(PARAMETERS_(tokens))
+                if tokens[0][0] == 15 and tokens[0][1] == ")":
+                    node.add_sons(Node(15, ")"))
+                    tokens.pop(0)
+                    if tokens[0][0] == 15 and tokens[0][1] == ";":
+                        node.add_sons(Node(15, ";"))
+                        tokens.pop(0)
+                        node.add_sons(S(tokens))
+                        return node
+                    else:
+                        raise Exception("Syntax Error: Missing ';'")
+                else:
+                    raise Exception("Syntax Error: Missing ')'")
+            else:
+                raise Exception("Syntax Error: Missing '('")
+        elif tokens[0][0] == 14 and tokens[2][0] != 12:
             node.add_sons(Node(14, None))
             tokens.pop(0)
             node.add_sons(D(tokens))
@@ -169,6 +192,21 @@ def A(tokens):
                 return node
             else:
                 raise Exception("Syntax Error: Missing ';'")
+    else:
+        raise Exception("Syntax Error: Missing Identifier")
+
+def PARAMETERS_(tokens):
+    node = Node("PARAMETERS_")
+    if tokens[0][0] == 21:
+        node.add_sons(Node(21, tokens[0][1]))
+        tokens.pop(0)
+        if tokens[0][0] == 15 and tokens[0][1] == ",":
+            node.add_sons(Node(15, ","))
+            tokens.pop(0)
+            node.add_sons(PARAMETERS_(tokens))
+            return node
+        else:
+            return node
     else:
         raise Exception("Syntax Error: Missing Identifier")
 
