@@ -17,7 +17,6 @@
 #Integer Numbers 16
 #Real Numbers 17
 #char 18
-#RETURN 19
 #FUNCTION 20
 #IDENTIFIER 21
 #booltype 22
@@ -43,6 +42,7 @@
 # F -> "FUNCTION" "id" "(" PARAMETERS ")" ":" S "RETURN" D ":" S
 # PARAMETERS -> T "id" | T "id" "," PARAMETERS
 # PARAMETERS_ -> "id" |"id" "," PARAMETERS_
+
 class Node:
     def __init__(self, type, value = None):
         self.type = type
@@ -75,9 +75,9 @@ def P(tokens):
             return node
         else:
             print(tokens[0][0], tokens[0][1])
-            raise Exception("Syntax Error: Missing ':' in the end")
+            raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
     else:
-        raise Exception("Syntax Error: Missing ':' in the beginning")
+        raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
 
 def S(tokens):
     node = Node("S")
@@ -117,9 +117,9 @@ def V(tokens):
             node.add_sons(S(tokens))
             return node
         else:
-            raise Exception("Syntax Error: Missing ';'")
+            raise Exception("Syntax Error: Missing ';' on line " + str(tokens[0][2]))
     else:
-        raise Exception("Syntax Error: Missing Identifier")
+        raise Exception("Syntax Error: Missing Identifier on line " + str(tokens[0][2]))
 
 def T(tokens):
     node = Node("T")
@@ -140,7 +140,7 @@ def T(tokens):
         tokens.pop(0)
         return node
     else:
-        raise Exception("Syntax Error: Missing Type")
+        raise Exception("Syntax Error: Missing Type on line " + str(tokens[0][2]) + " or invalid type")
 
 def A(tokens):
     node = Node("A")
@@ -165,11 +165,11 @@ def A(tokens):
                         node.add_sons(S(tokens))
                         return node
                     else:
-                        raise Exception("Syntax Error: Missing ';'")
+                        raise Exception("Syntax Error: Missing ';' on line " + str(tokens[0][2]))
                 else:
-                    raise Exception("Syntax Error: Missing ')'")
+                    raise Exception("Syntax Error: Missing ')' on line " + str(tokens[0][2]))
             else:
-                raise Exception("Syntax Error: Missing '('")
+                raise Exception("Syntax Error: Missing '(' on line " + str(tokens[0][2]))
         elif tokens[0][0] == 14 and tokens[2][0] != 12:
             node.add_sons(Node(14, None))
             tokens.pop(0)
@@ -180,7 +180,7 @@ def A(tokens):
                 node.add_sons(S(tokens))
                 return node
             else:
-                raise Exception("Syntax Error: Missing ';'")
+                raise Exception("Syntax Error: Missing ';' on line " + str(tokens[0][2]))
         elif tokens[0][0] == 14 and tokens[2][0] == 12:
             node.add_sons(Node(14, None))
             tokens.pop(0)
@@ -191,9 +191,9 @@ def A(tokens):
                 node.add_sons(S(tokens))
                 return node
             else:
-                raise Exception("Syntax Error: Missing ';'")
+                raise Exception("Syntax Error: Missing ';' on line " + str(tokens[0][2]))
     else:
-        raise Exception("Syntax Error: Missing Identifier")
+        raise Exception("Syntax Error: Missing Identifier on line " + str(tokens[0][2]) + " or invalid Identifier")
 
 def PARAMETERS_(tokens):
     node = Node("PARAMETERS_")
@@ -208,7 +208,7 @@ def PARAMETERS_(tokens):
         else:
             return node
     else:
-        raise Exception("Syntax Error: Missing Identifier")
+        raise Exception("Syntax Error: Missing Identifier on line " + str(tokens[0][2]) + " or invalid Identifier")
 
 def D(tokens):
     node = Node("D")
@@ -233,7 +233,7 @@ def D(tokens):
         tokens.pop(0)
         return node
     else:
-        raise Exception("Syntax Error: Missing Data")
+        raise Exception("Syntax Error: Missing Data on line " + str(tokens[0][2]) + " or invalid Data")
 
 def EXP(tokens):
     node = Node("EXP")
@@ -265,7 +265,7 @@ def EXP(tokens):
         tokens.pop(0)
         return node
     else:
-        raise Exception("Syntax Error: Missing Expression")
+        raise Exception("Syntax Error: Missing Expression on line " + str(tokens[0][2]) + " or invalid Expression")
 
 def E(tokens):
     node = Node("E")
@@ -282,9 +282,9 @@ def E(tokens):
                 node.add_sons(S(tokens))
                 return node
             else:
-                raise Exception("Syntax Error: Missing ':'")
+                raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
         else:
-            raise Exception("Syntax Error: Missing ':'")
+            raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
     elif tokens[0][0] == 5:
         node.add_sons(Node(5, None))
         tokens.pop(0)
@@ -309,7 +309,13 @@ def E(tokens):
                             node.add_sons(S(tokens))
                             return node
                     else:
-                        raise Exception("Syntax Error: Missing ':'")
+                        raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
+                else:
+                    raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
+            else:
+                raise Exception("Syntax Error: Missing ')' on line " + str(tokens[0][2]))
+        else:
+            raise Exception("Syntax Error: Missing '(' on line " + str(tokens[0][2]))
 
 def I(tokens):
     node = Node("I")
@@ -336,13 +342,13 @@ def I(tokens):
                         node.add_sons(S(tokens))
                         return node
                     else:
-                        raise Exception("Syntax Error: Missing ':'")
+                        raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
                 else:
-                    raise Exception("Syntax Error: Missing ':'")
+                    raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
             else:
-                raise Exception("Syntax Error: Missing ')'")
+                raise Exception("Syntax Error: Missing ')' on line " + str(tokens[0][2]))
         else:
-            raise Exception("Syntax Error: Missing '('")
+            raise Exception("Syntax Error: Missing '(' on line " + str(tokens[0][2]))
     elif tokens[0][0] == 5:
         node.add_sons(Node(5, None))
         tokens.pop(0)
@@ -363,13 +369,13 @@ def I(tokens):
                         node.add_sons(S(tokens))
                         return node
                     else:
-                        raise Exception("Syntax Error: Missing ':'")
+                        raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
                 else:
-                    raise Exception("Syntax Error: Missing ':'")
+                    raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
             else:
-                raise Exception("Syntax Error: Missing ')'")
+                raise Exception("Syntax Error: Missing ')' on line " + str(tokens[0][2]))
         else:
-            raise Exception("Syntax Error: Missing '('")
+            raise Exception("Syntax Error: Missing '(' on line " + str(tokens[0][2]))
     elif tokens[0][0] == 6:
         node.add_sons(Node(6, None))
         tokens.pop(0)
@@ -383,11 +389,11 @@ def I(tokens):
                 node.add_sons(S(tokens))
                 return node
             else:
-                raise Exception("Syntax Error: Missing ':'")
+                raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
         else:
-            raise Exception("Syntax Error: Missing ':'")
+            raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
     else:
-        raise Exception("Syntax Error: Missing 'IF'")
+        raise Exception("Syntax Error: Missing 'IF' on line " + str(tokens[0][2]) + " or invalid 'IF'")
 
 def CONDITION(tokens):
     node = Node("CONDITION")
@@ -418,7 +424,7 @@ def CONDITION(tokens):
         node.add_sons(C_(tokens))
         return node
     else:
-        raise Exception("Syntax Error: Missing Condition")
+        raise Exception("Syntax Error: Missing Condition on line " + str(tokens[0][2]) + " or invalid Condition")
 
 def C_(tokens):
     node = Node("C_")
@@ -454,7 +460,7 @@ def C_(tokens):
         node.add_sons(CONDITION(tokens))
         return node
     else:
-        raise Exception("Syntax Error: Missing Condition")
+        raise Exception("Syntax Error: Missing Condition on line " + str(tokens[0][2]) + " or invalid Condition")
     
 def OPR(tokens):
     node = Node("OPR")
@@ -483,7 +489,7 @@ def OPR(tokens):
         tokens.pop(0)
         return node
     else:
-        raise Exception("Syntax Error: Missing Operator")
+        raise Exception("Syntax Error: Missing Operator on line " + str(tokens[0][2]) + " or invalid Operator")
 
 def OPA(tokens):
     node = Node("OPA")
@@ -504,7 +510,7 @@ def OPA(tokens):
         tokens.pop(0)
         return node
     else:
-        raise Exception("Syntax Error: Missing Operator")
+        raise Exception("Syntax Error: Missing Operator on line " + str(tokens[0][2]) + " or invalid Operator")
 
 def L(tokens):
     node = Node("L")
@@ -528,15 +534,15 @@ def L(tokens):
                         node.add_sons(S(tokens))
                         return node
                     else:
-                        raise Exception("Syntax Error: Missing ':'")
+                        raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
                 else:
-                    raise Exception("Syntax Error: Missing ':'")
+                    raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
             else:
-                raise Exception("Syntax Error: Missing ')'")
+                raise Exception("Syntax Error: Missing ')' on line " + str(tokens[0][2]))
         else:
-            raise Exception("Syntax Error: Missing '('")
+            raise Exception("Syntax Error: Missing '(' on line " + str(tokens[0][2]))
     else:
-        raise Exception("Syntax Error: Missing 'WHILE'")
+        raise Exception("Syntax Error: Missing 'WHILE' on line " + str(tokens[0][2]) + " or invalid 'WHILE'")
 
 def W(tokens):
     node = Node("W")
@@ -556,14 +562,14 @@ def W(tokens):
                     node.add_sons(S(tokens))
                     return node
                 else:
-                    raise Exception("Syntax Error: Missing ';'")
+                    raise Exception("Syntax Error: Missing ';' on line " + str(tokens[0][2]))
             else:
                 print(tokens[0][0], tokens[0][1])
-                raise Exception("Syntax Error: Missing ')'")
+                raise Exception("Syntax Error: Missing ')' on line " + str(tokens[0][2]))
         else:
-            raise Exception("Syntax Error: Missing '('")
+            raise Exception("Syntax Error: Missing '(' on line " + str(tokens[0][2]))
     else:
-        raise Exception("Syntax Error: Missing 'WRITE'")
+        raise Exception("Syntax Error: Missing 'WRITE' on line " + str(tokens[0][2]) + " or invalid 'WRITE'")
 
 def R(tokens):
     node = Node("R")
@@ -585,15 +591,15 @@ def R(tokens):
                         node.add_sons(S(tokens))
                         return node
                     else:
-                        raise Exception("Syntax Error: Missing ';'")
+                        raise Exception("Syntax Error: Missing ';' on line " + str(tokens[0][2]))
                 else:
-                    raise Exception("Syntax Error: Missing ')'")
+                    raise Exception("Syntax Error: Missing ')' on line " + str(tokens[0][2]))
             else:
-                raise Exception("Syntax Error: Missing Identifier")
+                raise Exception("Syntax Error: Missing Identifier on line " + str(tokens[0][2]))
         else:
-            raise Exception("Syntax Error: Missing '('")
+            raise Exception("Syntax Error: Missing '(' on line " + str(tokens[0][2]))
     else:
-        raise Exception("Syntax Error: Missing 'READ'")
+        raise Exception("Syntax Error: Missing 'READ' on line " + str(tokens[0][2]) + " or invalid 'READ'")
     return node
 
 def F(tokens):
@@ -626,17 +632,17 @@ def F(tokens):
                                 return node
                             else:
                                 print(tokens[0][0], tokens[0][1])
-                                raise Exception("Syntax Error: Missing ':'")
+                                raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
                         else:
-                            raise Exception("Syntax Error: Missing 'RETURN'")
+                            raise Exception("Syntax Error: Missing 'RETURN' on line " + str(tokens[0][2]) + " or invalid 'RETURN'")
                     else:
-                        raise Exception("Syntax Error: Missing ':'")
+                        raise Exception("Syntax Error: Missing ':' on line " + str(tokens[0][2]))
                 else:
-                    raise Exception("Syntax Error: Missing ')'")
+                    raise Exception("Syntax Error: Missing ')' on line " + str(tokens[0][2]))
             else:
-                raise Exception("Syntax Error: Missing '('")
+                raise Exception("Syntax Error: Missing '(' on line " + str(tokens[0][2]))
         else:
-            raise Exception("Syntax Error: Missing Identifier")
+            raise Exception("Syntax Error: Missing Identifier on line " + str(tokens[0][2]))
     return node
 
 def PARAMETERS(tokens):
@@ -653,8 +659,9 @@ def PARAMETERS(tokens):
         else:
             return node
     else:
-        raise Exception("Syntax Error: Missing Identifier")
+        raise Exception("Syntax Error: Missing Identifier on line" + str(tokens[0][2]) + " or invalid Identifier")
 
 def syntax_analyzer(tokens):
     root = build_tree(tokens)
     return root
+

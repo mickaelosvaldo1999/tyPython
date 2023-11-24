@@ -16,12 +16,9 @@
 #Special Symbols 15 ( ) [ ] : , ;
 #Integer Numbers 16
 #Real Numbers 17
-#char 18
-#RETURN 19
+#STRING 18
 #FUNCTION 20
 #IDENTIFIER 21
-#booltype 22
-
 def remove_coments(text):
     start_index = text.find('$')
 
@@ -83,6 +80,10 @@ def split_text(text):
             start_point = i+1
             if (num == -1):
                 raise('Error - Missing (") ')
+        #verifying if text[i] == \n
+        elif(text[i] == "\n" and (i == start_point)):
+            splited_text.append(text[i])
+            start_point = i+1
         i= i+1
     return splited_text
     
@@ -97,48 +98,49 @@ def check_number(n):
     except ValueError:
         return 0
 
-def tokens(text):
+def tokens(text, line):
+    if (text == "\n"):
+        return line+1
     #Return of this functios is always "TYPE, LEXEME"
     #List of keywords
     listKW= ["INTEGER", "STRING","REAL","BOOLEAN", "IF", "ELIF", "ELSE", "WHILE", "WRITE", "READ", "RETURN"]
-    
     for i in range(len(listKW)):
         if (text == listKW[i]):
-            return i,None
+            return i,None, line
     #List of logical operators
     listLO= ["AND","OR","NOT"]
     for i in range(len(listLO)):
         if (text == listLO[i]):
-            return 11, text
+            return 11, text, line
     #List of arithmetical operators
     listAO=["+","*","/","-"]
     for i in range(len(listAO)):
         if (text == listAO[i]):
-            return 12,text
+            return 12,text, line
     #List of relational operators
     listRO=[">","<","<=",">=","=","!="]
     for i in range(len(listRO)):
         if (text == listRO[i]):
-            return 13,text
+            return 13,text, line
     #Assign Operator
     if (text == "<-"):
-        return 14,None
+        return 14,None, line
     #List of special symbols
     listSS=["(",")","[","]",":",",",";"]
     for i in range(len(listSS)):
         if (text == listSS[i]):
-            return 15,text
+            return 15,text, line
     
     c_n = check_number(text)
     if (c_n != 0):
-        return c_n,text
+        return c_n,text, line
     if (text[0] == '"'):
-        return 18,text
+        return 18,text, line
     if (text == "RETURN"):
-        return 19,None
+        return 19,None, line
     if (text == "FUNCTION"):
-        return 20,None
+        return 20,None, line
     if (not text.isupper()):
-        return 21,text
+        return 21,text, line
     else:
         raise Exception(f"Lexical analyzer : Invalid token {text}")
