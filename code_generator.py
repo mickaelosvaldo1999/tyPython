@@ -121,6 +121,8 @@ def code_generator(tokens):
                 tokens[i+1] = None
                 file.write("\n")
                 ident = ident - 1
+    #Closing the file
+    file.close()
             
 def verify_conditions(token1, token2):
     if (token1 == 15 and token2== ")"):

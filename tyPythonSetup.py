@@ -1,4 +1,9 @@
-from lexicalAnalyzer import scanner
+from lexical_analyzer import tokens as scanner
+from lexical_analyzer import remove_coments, split_text
+from syntax_analyzer import syntax_analyzer
+from code_generator import code_generator
+from semantic_analyzer import semantic_analyzer
+
 class tyPython():
     def __init__(self, mode):
         self.mode = mode
@@ -43,7 +48,40 @@ class tyPython():
     def run(self, file):
         if (self.typeSyntax(file)):
             print("Running file " + file)
-            tokens = scanner(file)
+            file = open(file,'r')
+            #Code from file
+            code = file.read()
+            #Removing comments
+            code = remove_coments(code)
+            #Splitting text into lexemes
+            code = split_text(code)
+            line = 1
+            #Creating tokens from lexemes
+            tokens = []
+            for i in range(len(code)):
+                tokenAux = scanner(code[i], line)
+                if not isinstance(tokenAux, tuple):
+                    line = tokenAux
+                else:
+                    tokens.append(tokenAux)
+            #Showing tokens
+            print("Tokens: ")
+            print(tokens)
+            aux = tokens[:][:]
+            #Syntax analyzer
+            sia =syntax_analyzer(tokens)
+            #Showing syntax tree
+            print("Syntax tree: ")
+            print(sia.__repr__)
+            #Semantic analyzer
+            sea = semantic_analyzer(sia)
+            #Showing symbol table
+            print("Symbol table: ")
+            print(sea)
+            #Generating Intermediate Code
+            code_generator(aux)
+            #Closing file
+            file.close()
             
     
     def runabs(self, file):
