@@ -52,12 +52,12 @@ class SemanticAnalyzer:
 
     def visit_node(self, node, current_scope=None):
         if node.type == "P":
-            # Program node, traverse the child nodes
+            # Nó do programa, percorre os nós filhos
             for son in node.sons:
                 self.visit_node(son, current_scope)
 
         elif node.type == "V":
-            # Variable Declaration node
+            # Nó de declaração de variável
             data_type = node.sons[0].type
             identifier = node.sons[1].value
 
@@ -67,7 +67,7 @@ class SemanticAnalyzer:
             self.symbol_table.setdefault(current_scope, {})[identifier] = data_type
 
         elif node.type == "A":
-            # Assignment node
+            # Nó de atribuição
             identifier = node.sons[0].value
             assigned_type = self.get_expression_type(node.sons[2], current_scope)
 
@@ -80,7 +80,7 @@ class SemanticAnalyzer:
                 raise Exception(f"Semantic error: Type mismatch in assignment for variable '{identifier}'.")
 
         elif node.type == "F":
-            # Function definition node
+            # Nó de definição de função
             function_name = node.sons[1].value
             return_type = node.sons[0].type
 
@@ -89,11 +89,11 @@ class SemanticAnalyzer:
 
             self.symbol_table.setdefault(current_scope, {})[function_name] = return_type
 
-            # Traverse the function body
+            # Percorre o corpo da função
             self.visit_node(node.sons[-1], function_name)
 
         elif node.type == "RETURN":
-            # Return statement node
+            # Nó de instrução de retorno
             return_type = self.get_expression_type(node.sons[0], current_scope)
 
             if current_scope is None or current_scope not in self.symbol_table:
@@ -105,7 +105,7 @@ class SemanticAnalyzer:
                 raise Exception("Semantic error: Return type mismatch in function.")
 
         else:
-            # Default case, traverse the child nodes
+            # Caso padrão, visita os nós filhos
             for son in node.sons:
                 self.visit_node(son, current_scope)
 
