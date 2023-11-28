@@ -6,7 +6,7 @@ def insert_ident(ident):
 #converting tokens to python
 def code_generator(tokens):
     #Opening the file
-    file = open("code.py",'w')
+    file = open("codeTPY.py",'w')
     ident = 0
     types = [0,1,2,3]
     values = [16,17,18,22]
