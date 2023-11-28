@@ -3,6 +3,7 @@ $ WRITE '(' any data ')' ';'$
 $ any data is string value, int value, bool value, real value or identifier $
 :
 STRING x;
+x <- "ola";
 WRITE("Write example");
 WRITE(x);
 :

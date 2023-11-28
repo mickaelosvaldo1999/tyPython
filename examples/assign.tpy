@@ -2,5 +2,5 @@ $ TyPython example of declaration and assignment of vars $
 $ between the identifier and the assign symbol "<-" there must be a space $
 :
 STRING x;
-x <- "Var assignment";
+x <- "var assignment";
 :

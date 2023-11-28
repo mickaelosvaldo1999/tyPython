@@ -45,7 +45,7 @@ class tyPython():
             print("Invalid file type. Use '.tpy' instead")
             return False
         
-    def run(self, file):
+    def run(self, file, alias=False):
         if (self.typeSyntax(file)):
             print("Running file " + file)
             file = open(file,'r')
@@ -64,20 +64,31 @@ class tyPython():
                     line = tokenAux
                 else:
                     tokens.append(tokenAux)
-            #Showing tokens
-            print("Tokens: ")
-            print(tokens)
+            
+            if alias == True:
+                print("===========================================")
+                print("                DEBUG MODE")
+                print("===========================================")
+                #Showing tokens
+                print("Tokens: ")
+                print(tokens)
+            
             aux = tokens[:][:]
             #Syntax analyzer
             sia =syntax_analyzer(tokens)
-            #Showing syntax tree
-            print("Syntax tree: ")
-            print(sia.__repr__)
             #Semantic analyzer
             sea = semantic_analyzer(sia)
-            #Showing symbol table
-            print("Symbol table: ")
-            print(sea)
+            
+            if alias == True:
+                #Showing syntax tree
+                
+                print("Syntax tree: ")
+                print(sia.__repr__)
+                
+                 #Showing symbol table
+                print("Symbol table: ")
+                print(sea)
+
             #Generating Intermediate Code
             code_generator(aux)
             #Closing file

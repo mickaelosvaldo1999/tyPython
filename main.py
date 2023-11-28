@@ -17,7 +17,11 @@ def main():
         elif chat[0] == "exit":
             control = False
         elif chat[0] == "run":
-            tpy.run(chat[1])
+            if len(chat) == 3:
+                if chat[2] == "-d":
+                    tpy.run(chat[1], alias=True)
+            else:
+                tpy.run(chat[1])
         elif chat[0] == "runabs":
             tpy.runabs(chat[1])
         else:

@@ -79,7 +79,7 @@ def split_text(text):
             i = i+num +1
             start_point = i+1
             if (num == -1):
-                raise('Error - Missing (") ')
+                raise Exception('Error - Missing (") ')
         #verifying if text[i] == \n
         elif(text[i] == "\n" and (i == start_point)):
             splited_text.append(text[i])
