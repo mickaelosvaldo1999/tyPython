@@ -108,7 +108,7 @@ def code_generator(tokens):
                 tokens[i+1] = None
                 ident = ident + 1
                 aux = i+2
-                while(verify_parameters(tokens[aux][0],tokens[aux][1])):
+                while(verify_conditions(tokens[aux][0],tokens[aux][1])):
                     if(tokens[aux][1] != None):
                         file.write(tokens[aux][1])
                     tokens[aux] = None
@@ -136,8 +136,8 @@ def verify_equal(token1, token2):
     else:
         return False
 
-def verify_parameters(token1, token2):
-    if (token1 == 15 and token2== ")"):
-        return False
-    else:
-        return True
+#def verify_parameters(token1, token2):
+    #if (token1 == 15 and token2== ")"):
+     #   return False
+    #else:
+     #   return True
