@@ -136,8 +136,6 @@ def tokens(text, line):
         return c_n,text, line
     if (text[0] == '"'):
         return 18,text, line
-    if (text == "RETURN"):
-        return 19,None, line
     if (text == "FUNCTION"):
         return 20,None, line
     if (not text.isupper()):

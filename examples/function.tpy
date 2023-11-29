@@ -2,7 +2,7 @@ $ TyPython example of functions $
 :
 FUNCTION soma(INTEGER a, INTEGER b):
     INTEGER c;
-    c <- a + b;
+    c <- a+b;
     RETURN c
 :
 INTEGER a;
