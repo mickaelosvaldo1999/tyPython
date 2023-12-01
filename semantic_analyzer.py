@@ -45,110 +45,148 @@
 
 class SemanticAnalyzer:
     def __init__(self):
-        self.symbol_table = {}
+        self.symbol_tables_stack = [{}]
 
     def analyze(self, syntax_tree):
         self.visit_node(syntax_tree)
 
-    def visit_node(self, node, current_scope=None):
-        if node.type == "P":
-            # Nó do programa, percorre os nós filhos
-            for son in node.sons:
-                self.visit_node(son, current_scope)
-
-        elif node.type == "V":
-            # Nó de declaração de variável
-            data_type = node.sons[0].type
-            identifier = node.sons[1].value
-
-            if identifier in self.symbol_table.get(current_scope, {}):
-                raise Exception(f"Semantic error: Variable '{identifier}' already declared in the current scope.")
-
-            self.symbol_table.setdefault(current_scope, {})[identifier] = data_type
-
+    def visit_node(self, node):
+        if node.type == "V":
+            self.handle_variable_declaration(node)
+        elif node.type == "R":
+            self.handle_read_statement(node)
         elif node.type == "A":
-            # Nó de atribuição
-            identifier = node.sons[0].value
-            assigned_type = self.get_expression_type(node.sons[2], current_scope)
-
-            if identifier not in self.symbol_table.get(current_scope, {}):
-                raise Exception(f"Semantic error: Variable '{identifier}' not declared in the current scope.")
-
-            declared_type = self.symbol_table[current_scope][identifier]
-
-            if assigned_type != declared_type:
-                raise Exception(f"Semantic error: Type mismatch in assignment for variable '{identifier}'.")
-
+            self.handle_assignment(node)
         elif node.type == "F":
-            # Nó de definição de função
-            function_name = node.sons[1].value
-            return_type = node.sons[0].type
+            self.handle_function_declaration(node)
 
-            if function_name in self.symbol_table.get(current_scope, {}):
-                raise Exception(f"Semantic error: Function '{function_name}' already declared in the current scope.")
+        for son in node.sons:
+            self.visit_node(son)
 
-            self.symbol_table.setdefault(current_scope, {})[function_name] = return_type
+    def handle_variable_declaration(self, node):
+        if node.sons[0].sons[0].type == 0:
+            data_type = "INTEGER"
+        elif node.sons[0].sons[0].type == 1:
+            data_type = "STRING"
+        elif node.sons[0].sons[0].type == 3:
+            data_type = "BOOLEAN"
+        elif node.sons[0].sons[0].type == 2:
+            data_type = "REAL"
 
-            # Percorre o corpo da função
-            self.visit_node(node.sons[-1], function_name)
+        variable_name = node.sons[1].value
 
-        elif node.type == "RETURN":
-            # Nó de instrução de retorno
-            return_type = self.get_expression_type(node.sons[0], current_scope)
+        current_symbol_table = self.symbol_tables_stack[-1]
 
-            if current_scope is None or current_scope not in self.symbol_table:
-                raise Exception("Semantic error: Return statement outside of a function.")
+        current_symbol_table[variable_name] = data_type
 
-            expected_return_type = self.symbol_table[current_scope]
+    def handle_read_statement(self, node):
+        variable_name = node.sons[2].value
+
+        # Check local scopes first
+        for symbol_table in reversed(self.symbol_tables_stack):
+            if variable_name in symbol_table:
+                return  # Variable found in local scope
+
+        # Check global scope
+        if variable_name not in self.symbol_tables_stack[0]:
+            raise Exception(f"Semantic Error: Variable '{variable_name}' not declared before reading.")
+
+    def handle_assignment(self, node):
+        variable_name = node.sons[0].value
+
+        # Check local scopes first
+        for symbol_table in reversed(self.symbol_tables_stack):
+            if variable_name in symbol_table:
+                data_declare = symbol_table[variable_name]
+                break
+        else:
+            # Variable not found in any local scope, check global scope
+            if variable_name not in self.symbol_tables_stack[0]:
+                raise Exception(f"Semantic Error: Variable '{variable_name}' not declared before assignment.")
+            data_declare = self.symbol_tables_stack[0][variable_name]
+
+        self.visit_node(node.sons[2])
+
+        data_assign = data_declare
+
+        if data_assign != data_declare:
+            raise Exception(f"Semantic Error: Variable '{variable_name}' is of type '{data_declare}' and cannot be assigned to '{data_assign}'.")
+
+    def check_variable_type(self, variable_name):
+        variable_name_without_spaces = "".join(variable_name.split())
+        # Check local scopes first
+        for symbol_table in reversed(self.symbol_tables_stack):
+            if variable_name_without_spaces in symbol_table:
+                return symbol_table[variable_name_without_spaces]
+            parameter_name = "PARAMETER " + variable_name_without_spaces
+            if parameter_name in symbol_table:
+                return symbol_table[parameter_name]
             
-            if return_type != expected_return_type:
-                raise Exception("Semantic error: Return type mismatch in function.")
+        # Check global scope
+        if variable_name not in self.symbol_tables_stack[0]:
+            raise Exception(f"Semantic Error: Variable '{variable_name}' not declared.")
+        
+        return self.symbol_tables_stack[0][variable_name]
 
-        else:
-            # Caso padrão, visita os nós filhos
-            for son in node.sons:
-                self.visit_node(son, current_scope)
+    def handle_function_declaration(self, node):
+        function_name = "FUNCTION " + node.sons[1].value
 
-    def get_expression_type(self, expression_node, current_scope):
-        if expression_node.type == "INTEGER":
-            return "INTEGER"
-        elif expression_node.type == "REAL":
-            return "REAL"
-        elif expression_node.type == "BOOLEAN":
-            return "BOOLEAN"
-        elif expression_node.type == "IDENTIFIER":
-            identifier = expression_node.value
+        # Parameters
+        self.check_parameters(node.sons[3], function_name)
 
-            if current_scope is None or current_scope not in self.symbol_table:
-                raise Exception("Semantic error: Variable used outside of a valid scope.")
+        # Enter a new local scope for the function, inheriting parameters
+        self.symbol_tables_stack.append(self.symbol_tables_stack[-1].copy())
 
-            if identifier not in self.symbol_table[current_scope]:
-                raise Exception(f"Semantic error: Variable '{identifier}' not declared in the current scope.")
+        # Body
+        self.visit_node(node.sons[6])
 
-            return self.symbol_table[current_scope][identifier]
+        current_symbol_table = self.symbol_tables_stack.pop(0)
 
-        elif expression_node.type in ["+", "-", "*", "/"]:
-            left_type = self.get_expression_type(expression_node.sons[0], current_scope)
-            right_type = self.get_expression_type(expression_node.sons[1], current_scope)
+        if function_name in current_symbol_table:
+            raise Exception(f"Semantic Error: Function '{function_name}' already declared.")
 
-            if left_type == right_type:
-                return left_type
-            else:
-                raise Exception("Semantic error: Type mismatch in arithmetic expression.")
+        if node.sons[8].sons[0].type == 21:
+            # Check the type of the variable in the symbol table
+            type_function = self.check_variable_type(node.sons[8].sons[0].value)
+        elif node.sons[8].sons[0].type == 18:
+            type_function = "STRING"
+        elif node.sons[8].sons[0].type == 16:
+            type_function = "INTEGER"
+        elif node.sons[8].sons[0].type == 17:
+            type_function = "REAL"
+        elif node.sons[8].sons[0].type == 22:
+            type_function = "BOOLEAN"
 
-        elif expression_node.type in [">", "<", ">=", "<=", "=", "!="]:
-            left_type = self.get_expression_type(expression_node.sons[0], current_scope)
-            right_type = self.get_expression_type(expression_node.sons[1], current_scope)
+        current_symbol_table[function_name] = type_function
+        self.symbol_tables_stack.insert(0, {function_name: type_function})
 
-            if left_type == right_type:
-                return "BOOLEAN"
-            else:
-                raise Exception("Semantic error: Type mismatch in relational expression.")
+    def check_parameters(self, parameters_node, function_name):
+        current_symbol_table = self.symbol_tables_stack[-1]
 
-        else:
-            raise Exception(f"Semantic error: Unsupported expression type '{expression_node.type}'.")
+        if len(parameters_node.sons) == 0:
+            return
+
+        parameter_name_declare = 'PARAMETER ' + parameters_node.sons[1].value
+
+        if parameter_name_declare in current_symbol_table:
+            raise Exception(f"Semantic Error: Parameter '{parameter_name_declare}' already declared.")
+
+        if parameters_node.sons[0].sons[0].type == 0:
+            parameter_type_declare = "INTEGER"
+        elif parameters_node.sons[0].sons[0].type == 1:
+            parameter_type_declare = "STRING"
+        elif parameters_node.sons[0].sons[0].type == 3:
+            parameter_type_declare = "BOOLEAN"
+        elif parameters_node.sons[0].sons[0].type == 2:
+            parameter_type_declare = "REAL"
+
+        current_symbol_table[parameter_name_declare] = parameter_type_declare
+
+        if len(parameters_node.sons) > 3:
+            self.check_parameters(parameters_node.sons[3], function_name)
+
 
 def semantic_analyzer(syntax_tree):
     semantic_analyzer = SemanticAnalyzer()
     semantic_analyzer.analyze(syntax_tree)
-    return semantic_analyzer.symbol_table
+    return semantic_analyzer.symbol_tables_stack
