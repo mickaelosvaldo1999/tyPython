@@ -107,7 +107,17 @@ class SemanticAnalyzer:
 
         self.visit_node(node.sons[2])
 
-        data_assign = data_declare
+        if node.sons[2].type == 'D':
+            if node.sons[2].sons[0].type == 18:
+                data_assign = "STRING"
+            elif node.sons[2].sons[0].type == 16:
+                data_assign = "INTEGER"
+            elif node.sons[2].sons[0].type == 17:
+                data_assign = "REAL"
+            elif node.sons[2].sons[0].type == 22:
+                data_assign = "BOOLEAN"
+        else:
+            data_assign = data_declare
 
         if data_assign != data_declare:
             raise Exception(f"Semantic Error: Variable '{variable_name}' is of type '{data_declare}' and cannot be assigned to '{data_assign}'.")
