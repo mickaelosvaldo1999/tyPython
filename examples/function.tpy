@@ -9,7 +9,7 @@ INTEGER a;
 INTEGER b;
 READ(a);
 READ(b);
-INTEGER c;
-c <- soma(a,b);
-WRITE(c);
+INTEGER d;
+d <- soma(a,b);
+WRITE(d);
 :
