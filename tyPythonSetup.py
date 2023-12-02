@@ -2,7 +2,7 @@ from lexical_analyzer import tokens as scanner
 from lexical_analyzer import remove_coments, split_text
 from syntax_analyzer import syntax_analyzer
 from code_generator import code_generator
-from n_semantic_analyzer import semantic_analyzer
+from semantic_analyzer import semantic_analyzer
 
 class tyPython():
     def __init__(self, mode):
