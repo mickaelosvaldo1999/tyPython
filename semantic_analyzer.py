@@ -82,25 +82,25 @@ class SemanticAnalyzer:
     def handle_read_statement(self, node):
         variable_name = node.sons[2].value
 
-        # Check local scopes first
+        # escopo local primeiro
         for symbol_table in reversed(self.symbol_tables_stack):
             if variable_name in symbol_table:
-                return  # Variable found in local scope
+                return  # variavel encontrada
 
-        # Check global scope
+        # escopo global
         if variable_name not in self.symbol_tables_stack[0]:
             raise Exception(f"Semantic Error: Variable '{variable_name}' not declared before reading.")
 
     def handle_assignment(self, node):
         variable_name = node.sons[0].value
 
-        # Check local scopes first
+        # escopo local primeiro
         for symbol_table in reversed(self.symbol_tables_stack):
             if variable_name in symbol_table:
                 data_declare = symbol_table[variable_name]
                 break
         else:
-            # Variable not found in any local scope, check global scope
+            # escopo global
             if variable_name not in self.symbol_tables_stack[0]:
                 raise Exception(f"Semantic Error: Variable '{variable_name}' not declared before assignment.")
             data_declare = self.symbol_tables_stack[0][variable_name]
@@ -124,7 +124,7 @@ class SemanticAnalyzer:
 
     def check_variable_type(self, variable_name):
         variable_name_without_spaces = "".join(variable_name.split())
-        # Check local scopes first
+        # escopo local primeiro
         for symbol_table in reversed(self.symbol_tables_stack):
             if variable_name_without_spaces in symbol_table:
                 return symbol_table[variable_name_without_spaces]
@@ -132,7 +132,7 @@ class SemanticAnalyzer:
             if parameter_name in symbol_table:
                 return symbol_table[parameter_name]
             
-        # Check global scope
+        # escopo global
         if variable_name not in self.symbol_tables_stack[0]:
             raise Exception(f"Semantic Error: Variable '{variable_name}' not declared.")
         
@@ -141,13 +141,13 @@ class SemanticAnalyzer:
     def handle_function_declaration(self, node):
         function_name = "FUNCTION " + node.sons[1].value
 
-        # Parameters
+        # parametros
         self.check_parameters(node.sons[3], function_name)
 
-        # Enter a new local scope for the function, inheriting parameters
+        # novo escopo local, herda os parametros
         self.symbol_tables_stack.append(self.symbol_tables_stack[-1].copy())
 
-        # Body
+        # visita os nós do corpo S da função
         self.visit_node(node.sons[6])
 
         current_symbol_table = self.symbol_tables_stack.pop(0)
@@ -156,7 +156,7 @@ class SemanticAnalyzer:
             raise Exception(f"Semantic Error: Function '{function_name}' already declared.")
 
         if node.sons[8].sons[0].type == 21:
-            # Check the type of the variable in the symbol table
+            # verifica o tipo das variaveis na tabela de simbolos
             type_function = self.check_variable_type(node.sons[8].sons[0].value)
         elif node.sons[8].sons[0].type == 18:
             type_function = "STRING"
